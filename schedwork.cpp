@@ -26,9 +26,6 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
     size_t row,
     size_t col);
 
-bool isValidWorker(unsigned int worker, size_t row, const AvailabilityMatrix& avail, DailySchedule& sched);
-bool isValidSchedule(const size_t maxShifts, const AvailabilityMatrix& avail, DailySchedule& sched);
-
 // Add your implementation of schedule() and other helper functions here
 
 bool schedule(
@@ -43,6 +40,17 @@ bool schedule(
     }
     sched.clear();
     // Add your code below
+
+    //create initial sched matrix filled with 0
+    for(size_t i = 0; i < avail.size(); ++i)
+    {
+        std::vector<Worker_T> temp;
+        sched.push_back(temp);
+        for(size_t j = 0; j < dailyNeed; ++j)
+        {
+            sched[i].push_back(INVALID_ID);
+        }
+    }
 
     return scheduleHelper(avail,dailyNeed,maxShifts,sched,0,0);
 
@@ -59,9 +67,25 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
     size_t col)
 {
     //completely filled the schedule matrix now check to see if it is valid
-    if(row > sched.size())
+    if(row > sched.size() - 1)
     {
-        return isValidSchedule(maxShifts, avail, sched);
+        //setup counter for how many times each worker is working
+        size_t size = avail[0].size();
+        std::vector<size_t> count;
+        for(size_t i = 0; i < size; ++i) count.push_back(0);
+
+        for(size_t i = 0; i < sched.size(); ++i)
+        {
+            std::vector<Worker_T>::iterator it = sched[i].begin();
+            while(it != sched[i].end())
+            {
+                ++count[*it];
+                if(count[*it] > maxShifts) return false;
+                ++it;
+            }
+        }
+
+        return true;
     }
 
     bool temp = false;
@@ -69,7 +93,26 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
     {
         //setting one of the slots to a valid worker
         //valid if it is in the avail matrix and not already working that day
-        if(isValidWorker(i, row, avail, sched));
+        bool condition;
+        if(avail[row][i] == false) condition = false;
+        else
+        {
+            //check to see if the worker is already working that day
+            std::vector<Worker_T>::iterator it = sched[row].begin();
+            while(it != sched[row].end())
+            {
+                if(*it == i)
+                {
+                    condition = false;
+                    break;
+                } 
+                ++it;
+            }
+            if(it == sched[row].end()) condition = true;
+        }
+
+        //if it is a valid worker
+        if(condition == true)
         {
             sched[row][col] = i;
 
@@ -90,46 +133,6 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
         }
         
     }
+    sched[row][col] = INVALID_ID;
     return false;
-}
-
-
-//checks to see if it is a valid worker for the day
-bool isValidWorker(unsigned int worker, size_t row, const AvailabilityMatrix& avail, DailySchedule& sched)
-{
-    //check to see if in availability matrix
-    if(avail[row][worker] == false) return false;
-
-    //check to see if the worker is already working that day
-    std::vector<Worker_T>::iterator it = sched[row].begin();
-    while(it != sched[row].end())
-    {
-        if(*it == worker) return false;
-        ++it;
-    }
-
-    return true;
-}
-
-//check to see if it is a valid completed schedule
-//it is a valid schedule if the workers are working less than or equal to the max shifts
-bool isValidSchedule(const size_t maxShifts, const AvailabilityMatrix& avail, DailySchedule& sched)
-{
-    //setup counter for how many times each worker is working
-    size_t size = avail[0].size();
-    std::vector<int> count;
-    for(size_t i = 0; i < size; ++i) count.push_back(0);
-
-    for(size_t i = 0; i < sched.size(); ++i)
-    {
-        std::vector<Worker_T>::iterator it = sched[i].begin();
-        while(it != sched[i].end())
-        {
-            ++count[*it];
-            if(count[*it] > maxShifts) return false;
-        }
-    }
-
-    return true;
-
 }
