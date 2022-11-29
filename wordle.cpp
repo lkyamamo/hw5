@@ -56,17 +56,25 @@ void generator(std::string::size_type index, std::string::size_type length, cons
     {
         //std::cout << "got to end" << std::endl;
         //checking to see if it has the floating characters
+
+        //MUST FIX: accounting for duplicate characters
+        std::string temp = output;
         bool condition = true;
         for(std::string::size_type i = 0; i < floating.size(); ++i)
         {
             //does not have floating character
-            if(output.find(floating[i]) == std::string::npos)
+            size_t pos = temp.find(floating[i]);
+            if(pos == std::string::npos)
             {
                 condition = false;
             }
+            else
+            {
+                temp[pos] = ' ';
+            }
         }
 
-        //if the string has both floating characters then insert it
+        //if the string has all floating characters then insert it
         if(condition)
         {
             possibilities.insert(output);
