@@ -87,10 +87,22 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         //does not have a guaranteed character
         if(in[index] == '-')
         {
+            //new idea of try the floating characters first before trying all other characters
+            std::string temp = in;
+            for(size_t i = 0; i < in.size(); ++i)
+            {
+                output[index] = in[i];
+                temp = in.substr(0,i) + in.substr(i+1, in.length() - i - 1);
+                generator(index+1, length, in, temp, output, possibilities);
+            }
+
             for(std::string::size_type i = 0; i < 26; ++i)
             {
-                output[index] = (char) (i + 97);
-                generator(index + 1, length, in, floating, output, possibilities);
+                if(in.find((char) (i + 97)) == std::string::npos)
+                {
+                    output[index] = (char) (i + 97);
+                    generator(index + 1, length, in, floating, output, possibilities);
+                }
             }
         }
         //does have guaranteed character

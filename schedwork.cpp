@@ -24,7 +24,8 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
     const size_t maxShifts,
     DailySchedule& sched,
     size_t row,
-    size_t col);
+    size_t col,
+    std::vector<size_t>& count);
 
 // Add your implementation of schedule() and other helper functions here
 
@@ -52,7 +53,13 @@ bool schedule(
         }
     }
 
-    return scheduleHelper(avail,dailyNeed,maxShifts,sched,0,0);
+    std::vector<size_t> workCounter;
+    for(size_t i = 0; i < avail[0].size(); ++i)
+    {
+        workCounter.push_back(0);
+    }
+
+    return scheduleHelper(avail,dailyNeed,maxShifts,sched,0,0,workCounter);
 
 
 }
@@ -64,27 +71,12 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
     const size_t maxShifts,
     DailySchedule& sched,
     size_t row,
-    size_t col)
+    size_t col,
+    std::vector<size_t>& count)
 {
     //completely filled the schedule matrix now check to see if it is valid
     if(row > sched.size() - 1)
     {
-        //setup counter for how many times each worker is working
-        size_t size = avail[0].size();
-        std::vector<size_t> count;
-        for(size_t i = 0; i < size; ++i) count.push_back(0);
-
-        for(size_t i = 0; i < sched.size(); ++i)
-        {
-            std::vector<Worker_T>::iterator it = sched[i].begin();
-            while(it != sched[i].end())
-            {
-                ++count[*it];
-                if(count[*it] > maxShifts) return false;
-                ++it;
-            }
-        }
-
         return true;
     }
 
@@ -97,6 +89,9 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
         if(avail[row][i] == false) condition = false;
         else
         {
+            //NEW IDEA not only check to see if worker is already working that day, but have counter in place
+            //to see if they already are working the max amount of days
+
             //check to see if the worker is already working that day
             std::vector<Worker_T>::iterator it = sched[row].begin();
             while(it != sched[row].end())
@@ -109,21 +104,25 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
                 ++it;
             }
             if(it == sched[row].end()) condition = true;
+
+            //check to see if he is already working max amount of days
+            if(count[i] == maxShifts) condition = false;
         }
 
         //if it is a valid worker
         if(condition == true)
         {
             sched[row][col] = i;
+            ++count[i];
 
             //properly going to the next location
             if(col + 1 < dailyNeed)
             {
-                temp = scheduleHelper(avail, dailyNeed, maxShifts, sched, row, col + 1);
+                temp = scheduleHelper(avail, dailyNeed, maxShifts, sched, row, col + 1, count);
             }
             else
             {
-                temp = scheduleHelper(avail, dailyNeed, maxShifts, sched, row + 1, 0);
+                temp = scheduleHelper(avail, dailyNeed, maxShifts, sched, row + 1, 0, count);
             }
         }
         
@@ -131,7 +130,7 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
         {
             return true;
         }
-        
+        --count[i];
     }
     sched[row][col] = INVALID_ID;
     return false;
