@@ -30,6 +30,7 @@ std::set<std::string> wordle(
 
     generator(0, in.size(), in, floating, temp, tempOutput);
 
+    std::cout << "finished generating" << std::endl;
     std::set<std::string>::iterator it = tempOutput.begin();
     while(it != tempOutput.end())
     {
