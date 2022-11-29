@@ -10,7 +10,7 @@ using namespace std;
 
 
 // Add prototypes of helper functions here
-void generator(std::string::size_type index, std::string::size_type length, const std::string& in, const std::string& floating, std::string& output, std::set<std::string>& possibilities);
+void generator(std::string::size_type index, std::string::size_type length, const std::string& in, const std::string& floating, const std::string& shortFloating, std::string& output, std::set<std::string>& possibilities);
 
 // Definition of primary wordle function
 std::set<std::string> wordle(
@@ -28,7 +28,7 @@ std::set<std::string> wordle(
         temp += 'a';
     }
 
-    generator(0, in.size(), in, floating, temp, tempOutput);
+    generator(0, in.size(), in, floating, floating, temp, tempOutput);
 
     std::cout << "finished generating" << std::endl;
     std::set<std::string>::iterator it = tempOutput.begin();
@@ -48,10 +48,10 @@ std::set<std::string> wordle(
 // Define any helper functions here
 
 //add all possible permutations to output
-void generator(std::string::size_type index, std::string::size_type length, const std::string& in, const std::string& floating, std::string& output, std::set<std::string>& possibilities)
+void generator(std::string::size_type index, std::string::size_type length, const std::string& in, const std::string& floating, const std::string& shortFloating, std::string& output, std::set<std::string>& possibilities)
 {
     //add all possible permutations to output 
-
+    
     //got to the end
     if(index == length)
     {
@@ -88,20 +88,22 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         if(in[index] == '-')
         {
             //new idea of try the floating characters first before trying all other characters
-            std::string temp = floating;
-            for(size_t i = 0; i < floating.size(); ++i)
+            std::string temp = shortFloating;
+            for(size_t i = 0; i < shortFloating.size(); ++i)
             {
-                output[index] = floating[i];
-                temp = floating.substr(0,i) + floating.substr(i+1, floating.length() - i - 1);
-                generator(index+1, length, in, temp, output, possibilities);
+                output[index] = shortFloating[i];
+                temp = shortFloating.substr(0,i) + shortFloating.substr(i+1, shortFloating.length() - i - 1);
+                generator(index+1, length, in, floating, temp, output, possibilities);
             }
+            //at this point have tried available floating characters all of which did not work
 
+            //pass the same set of shortened floating characters to next level as we started with
             for(std::string::size_type i = 0; i < 26; ++i)
             {
-                if(in.find((char) (i + 97)) == std::string::npos)
+                if(shortFloating.find((char) (i + 97)) == std::string::npos)
                 {
                     output[index] = (char) (i + 97);
-                    generator(index + 1, length, in, floating, output, possibilities);
+                    generator(index + 1, length, in, floating, shortFloating, output, possibilities);
                 }
             }
         }
@@ -109,7 +111,7 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         else
         {
             output[index] = in[index];
-            generator(index + 1, length, in, floating, output, possibilities);
+            generator(index + 1, length, in, floating, shortFloating, output, possibilities);
         }
         
     }
