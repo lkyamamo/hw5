@@ -30,7 +30,6 @@ std::set<std::string> wordle(
 
     generator(0, in.size(), in, floating, floating, temp, tempOutput);
 
-    std::cout << "finished generating" << std::endl;
     std::set<std::string>::iterator it = tempOutput.begin();
     while(it != tempOutput.end())
     {
@@ -51,7 +50,7 @@ std::set<std::string> wordle(
 void generator(std::string::size_type index, std::string::size_type length, const std::string& in, const std::string& floating, const std::string& shortFloating, std::string& output, std::set<std::string>& possibilities)
 {
     //add all possible permutations to output 
-    
+
     //got to the end
     if(index == length)
     {
@@ -92,6 +91,9 @@ void generator(std::string::size_type index, std::string::size_type length, cons
             for(size_t i = 0; i < shortFloating.size(); ++i)
             {
                 output[index] = shortFloating[i];
+
+                std::cout << shortFloating[i] << std::endl;
+                
                 temp = shortFloating.substr(0,i) + shortFloating.substr(i+1, shortFloating.length() - i - 1);
                 generator(index+1, length, in, floating, temp, output, possibilities);
             }
