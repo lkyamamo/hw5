@@ -78,6 +78,7 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         if(condition)
         {
             possibilities.insert(output);
+            std::cout <<"inserted" << std::endl;
         }
 
     }
