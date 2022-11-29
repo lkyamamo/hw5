@@ -63,7 +63,7 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         for(std::string::size_type i = 0; i < floating.size(); ++i)
         {
             //does not have floating character
-            size_t pos = temp.find(floating[i]);
+            std::string::size_type pos = temp.find(floating[i]);
             if(pos == std::string::npos)
             {
                 condition = false;
