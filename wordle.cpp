@@ -88,8 +88,8 @@ void generator(std::string::size_type index, std::string::size_type length, cons
         if(in[index] == '-')
         {
             //new idea of try the floating characters first before trying all other characters
-            std::string temp = in;
-            for(size_t i = 0; i < in.size(); ++i)
+            std::string temp = floating;
+            for(size_t i = 0; i < floating.size(); ++i)
             {
                 output[index] = floating[i];
                 temp = floating.substr(0,i) + floating.substr(i+1, floating.length() - i - 1);
