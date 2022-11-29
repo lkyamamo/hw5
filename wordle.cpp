@@ -91,10 +91,8 @@ void generator(std::string::size_type index, std::string::size_type length, cons
             for(size_t i = 0; i < shortFloating.size(); ++i)
             {
                 output[index] = shortFloating[i];
-
-                std::cout << shortFloating[i] << std::endl;
-                
                 temp = shortFloating.substr(0,i) + shortFloating.substr(i+1, shortFloating.length() - i - 1);
+
                 generator(index+1, length, in, floating, temp, output, possibilities);
             }
             //at this point have tried available floating characters all of which did not work
