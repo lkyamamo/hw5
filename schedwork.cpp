@@ -106,7 +106,7 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
             if(it == sched[row].end()) condition = true;
 
             //check to see if he is already working max amount of days
-            if(count[i] == maxShifts) condition = false;
+            if(count[i] >= maxShifts) condition = false;
         }
 
         //if it is a valid worker
@@ -124,13 +124,14 @@ bool scheduleHelper(const AvailabilityMatrix& avail,
             {
                 temp = scheduleHelper(avail, dailyNeed, maxShifts, sched, row + 1, 0, count);
             }
+            --count[i];
         }
         
         if(temp == true)
         {
             return true;
         }
-        --count[i];
+        
     }
     sched[row][col] = INVALID_ID;
     return false;
