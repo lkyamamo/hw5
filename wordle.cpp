@@ -91,8 +91,8 @@ void generator(std::string::size_type index, std::string::size_type length, cons
             std::string temp = in;
             for(size_t i = 0; i < in.size(); ++i)
             {
-                output[index] = in[i];
-                temp = in.substr(0,i) + in.substr(i+1, in.length() - i - 1);
+                output[index] = floating[i];
+                temp = floating.substr(0,i) + floating.substr(i+1, floating.length() - i - 1);
                 generator(index+1, length, in, temp, output, possibilities);
             }
 
