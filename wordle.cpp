@@ -35,7 +35,7 @@ std::set<std::string> wordle(
     }
 
     size_t unknowns = count - floating.length();
-    generator(0, in.size(), in, floating, floating, count, temp, tempOutput);
+    generator(0, in.size(), in, floating, floating, unknowns, temp, tempOutput);
 
     std::set<std::string>::iterator it = tempOutput.begin();
     while(it != tempOutput.end())
